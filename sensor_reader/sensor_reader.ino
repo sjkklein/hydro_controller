@@ -22,7 +22,7 @@
 
 #define SECOND_PUMP 8
 #define PH_UP 6
-#define PH_DOWN 7
+#define PH_DOWN 5
 
 
 #define PH_OFFSET 0.02            //deviation compensate
@@ -159,11 +159,11 @@ void parse_instr(){
 }
 
 float measure_ph(){
-  int raw=0;
+  long raw=0;
   float voltage;
-  for(int i=0;i<10;i++)
+  for(int i=0;i<100;i++)
     raw += analogRead(PH_PIN);
-  voltage = (raw/10)*5.0/1024;
+  voltage = (raw/100)*5.0/1024;
   return 3.5*voltage + PH_OFFSET;
 }
 

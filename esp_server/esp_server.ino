@@ -63,6 +63,7 @@ void set_time(){
     return;
   }
   Serial.println(server.arg("hour")+":"+server.arg("minute")+":"+server.arg("second"));
+  
   if(verify_time())
   
   }else{                                                                            // Username and password don't match

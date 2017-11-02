@@ -1,3 +1,11 @@
+/*
+ * This code is written to measure some sensor data for my hydroponics system.
+ * 
+ * NOT FULLY IMPLEMENTED
+ * I have pumps to control ph but i have not tested controlling it automatically yet.
+ * 
+ */
+
 #include <DallasTemperature.h>
 #include <OneWire.h>
 #include <Adafruit_Sensor.h>
@@ -34,7 +42,10 @@
 
 /*
  accepted commands
- 's' int int int --sets the clock
+ 's' int int int --sets the real time clock
+ 't' --arduino returns time in format: 't' int int int
+ 'd' --arduino sends sensor data
+ 
 */
 
 /*
@@ -54,7 +65,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
 OneWire oneWire(DB18_PIN);
 DallasTemperature db18(&oneWire);
 
-char str[30];
+char str[200];
 
 void toggle_led(){
   static int blan;
@@ -107,8 +118,6 @@ void loop() {
     millisecond+=now-way_back_when;
     way_back_when=now;
     if(millisecond>=999){
-      sprintf(str," t %d %d %d\n",hour,minute,second);
-      Serial.print(str);
       second++;
       toggle_led();
       digitalWrite(SECOND_PUMP, digitalRead(RES_SWITCH));
@@ -134,7 +143,7 @@ void parse_instr(){
   int s,m,h;
   if(Serial.available()){
     instr = Serial.read();
-    if(instr == 'c'){
+    if(instr == 's'){
       //setting the clock to the new time
       h=Serial.parseInt();
       m=Serial.parseInt();
@@ -144,11 +153,11 @@ void parse_instr(){
         second=s;
         hour=h;   
       }
-    }else if(instr ==  's'){
+    }else if(instr ==  'd'){
       send_sensor_data();
     }else if(instr == 't'){
-      digitalWrite(LIGHT_PIN,!digitalRead(LIGHT_PIN));
-      digitalWrite(MAIN_PUMP,!digitalRead(MAIN_PUMP));
+      sprintf(str," t %d %d %d\n",hour,minute,second);
+      Serial.print(str);
     }
     else{
       Serial.flush();
@@ -169,17 +178,18 @@ float measure_ph(){
 
 void send_sensor_data(){
 db18.requestTemperatures();
-Serial.print(" h ");//humidity
+
+Serial.print(" d ");//humidity
 Serial.print( dht.readHumidity() );
-Serial.print(" a ");//airtemp
+Serial.print(" ");//airtemp
 Serial.print( dht.readTemperature(true) );
-Serial.print(" w ");//watertemp
+Serial.print(" ");//watertemp
 Serial.print( db18.getTempFByIndex(0) );
-Serial.print(" p ");//ph
+Serial.print(" ");//ph
 Serial.print(measure_ph()); 
-Serial.print(" r ");//resevoir level
+Serial.print(" ");//resevoir level
 Serial.print(digitalRead(RES_SWITCH));
-Serial.print(" b ");//backup water level
+Serial.print(" ");//backup water level
 Serial.print(digitalRead(BAK_SWITCH));
 Serial.print("\n");
 }

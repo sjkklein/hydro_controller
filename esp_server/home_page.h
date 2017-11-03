@@ -1,4 +1,4 @@
-const char* root_page = 
+ const char* root_page = 
 "\
 <h1>Tower Info</h1>\
 <h3>Time: %dh: %dm: %ds</h3>\

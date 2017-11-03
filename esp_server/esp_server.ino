@@ -123,21 +123,24 @@ void collect_data(){
   String sensor_str;
   int count=0;
   Serial.println("t");
-  
-  while(!serial.available() && count < 100){
-    delay(1);
+  while(!Serial.available() && count < 10000){
+    delay(10);
     count++;
   }
-  count =0;
+  count = 0;
   if(Serial.read() == 't'){
     hour = Serial.parseInt();  
     minute = Serial.parseInt(); 
     second = Serial.parseInt();
-  } 
+  }else{
+    hour=-1;
+    minute=-1;
+    second=-1;
+  }
   Serial.flush();
   Serial.println("d");
-  while(!serial.available() && count < 100){
-    delay(1);
+  while(!Serial.available() && count < 100000){
+    delay(10);
     count++;
   }
   if(Serial.read() == 'd'){
